@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS Sales;
+CREATE TABLE Sales(codClaveVenta varchar(50),tipProductoBcaMinorista varchar(50),codMes varchar(50),codInternoComputacional varchar(50),codClaveUnicoClidl varchar(50),codVendedor varchar(50),fecVenta varchar(50),mtoVenta varchar(50),codMoneda varchar(50),codProducto varchar(50),codSolicitud varchar(50),tipVtaProductoBcaMinorista varchar(50),codProductoAplicativo varchar(50),codEstVtaProdBcaMinorista varchar(50),codSistVtaProdBcaMinorista varchar(50),flgRegEliminado varchar(50))
+
+INSERT INTO Sales(codClaveVenta, tipProductoBcaMinorista, codMes, codInternoComputacional, codClaveUnicoClidl, codVendedor, fecVenta, mtoVenta, codMoneda, codProducto, codSolicitud, tipVtaProductoBcaMinorista, codProductoAplicativo, codEstVtaProdBcaMinorista, codSistVtaProdBcaMinorista, flgRegEliminado)
+
+VALUES ('072fedb822254c7681681c9570e7fb4753edc2a92ed64', 'TARJETA DE CRÉDITO', '202204', '123456789012', 'ed5028d2a6df758d82a08f1688263376ff7093656', 'MAT1234', '03/10/2022', '1250.75', '0001', 'TIOPRD01', 'SOL-123456789', '2', 'EFME', '2', 'SCRM', '11/11/2022');

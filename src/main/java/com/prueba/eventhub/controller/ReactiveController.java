@@ -2,7 +2,7 @@ package com.prueba.eventhub.controller;
 
 import com.prueba.eventhub.model.Ruv;
 import com.prueba.eventhub.servicios.ConsumerToEventHubService;
-import io.reactivex.rxjava3.core.Observable;
+//import io.reactivex.rxjava3.core.Observable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,13 +25,13 @@ public class ReactiveController {
 	public Flux<Ruv> findEventName(@RequestParam String eventHubName) {
 		return Flux.just(consumerToEventHubService.consumerToEventHubNr(eventHubName));
 	}
-
+/*
 	@GetMapping(value = "/eventhub-rxjava", produces = {MediaType.APPLICATION_STREAM_JSON_VALUE,
 			MediaType.APPLICATION_JSON_VALUE})
 	public Observable<Ruv> findEventName1(@RequestParam String eventHubName) {
 		return Observable.just(consumerToEventHubService.consumerToEventHubNr(eventHubName));
 	}
-
+*/
 
 }
 
