@@ -2,7 +2,7 @@ package com.prueba.eventhub.controller;
 
 import com.prueba.eventhub.model.Ruv;
 import com.prueba.eventhub.model.Sales;
-import com.prueba.eventhub.model.VentaReponse;
+import com.prueba.eventhub.model.VentaResponse;
 import com.prueba.eventhub.repository.VentasRepository;
 import com.prueba.eventhub.servicios.ConsumerToEventHubService;
 import com.prueba.eventhub.servicios.DatabaseService;
@@ -47,7 +47,7 @@ public class SqlController {
 
 	@GetMapping(value = "/eventhubsql", produces = {MediaType.APPLICATION_STREAM_JSON_VALUE,
 			MediaType.APPLICATION_JSON_VALUE})
-	public VentaReponse findEventNameSql(@RequestParam String eventHubName) {
+	public VentaResponse findEventNameSql(@RequestParam String eventHubName) {
 		return consumerToEventHubService.consumerEventHubToSql(eventHubName);
 	}
 

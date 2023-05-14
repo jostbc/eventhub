@@ -1,7 +1,10 @@
 package com.prueba.eventhub.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.relational.core.mapping.Column;
 
 @Data
@@ -57,4 +60,5 @@ public class Sales {
     @JsonAlias("flgRegEliminado")
     @Column("flgRegEliminado")
     private String flgRegEliminado;
+
 }

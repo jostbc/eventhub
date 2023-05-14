@@ -7,12 +7,10 @@ import com.azure.messaging.eventhubs.models.EventPosition;
 import com.azure.messaging.eventhubs.models.PartitionEvent;
 import com.google.gson.Gson;
 import com.prueba.eventhub.model.Sales;
-import com.prueba.eventhub.model.VentaReponse;
-import com.prueba.eventhub.repository.VentasRepository;
+import com.prueba.eventhub.model.VentaResponse;
 import com.prueba.eventhub.servicios.ConsumerToEventHubService;
 import com.prueba.eventhub.servicios.DatabaseService;
 import groovy.util.logging.Slf4j;
-import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +21,9 @@ import com.prueba.eventhub.model.Ruv;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 @Service
 @Slf4j
@@ -34,6 +34,7 @@ public class ConsumerToEventHubServiceImpl implements ConsumerToEventHubService 
     private static final String EVENT_HUB_NAME = "VentasEvent";
     private static final String SHARED_ACCESS_KEY = "JkG4ZL3xMRSL3Qvxj5+3PBndchWUWl6Jn+AEhCux8Fk=";
     private static final String EVENT_HUB_CONNECTION_STRING = "Endpoint=sb://" + EVENT_HUB_NAMESPACE + ".servicebus.windows.net:443/;SharedAccessKeyName=" + SHARED_ACCESS_KEY_NAME + ";SharedAccessKey=" + SHARED_ACCESS_KEY;
+    private static final Random random = new Random(System.currentTimeMillis());
     Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -138,43 +139,44 @@ public class ConsumerToEventHubServiceImpl implements ConsumerToEventHubService 
     }
 
     @Override
-    public VentaReponse consumerEventHubToSql(String eventHubName) {
-
+    public VentaResponse consumerEventHubToSql(String eventHubName) {
         try{
             EventHubConsumerClient consumerClient = new EventHubClientBuilder()
                     .connectionString(EVENT_HUB_CONNECTION_STRING, eventHubName)
                     .consumerGroup(EventHubClientBuilder.DEFAULT_CONSUMER_GROUP_NAME)
                     .buildConsumerClient();
-            System.out.println("conecto"+" - "+consumerClient.getFullyQualifiedNamespace());
             List<Sales> ventasList = new ArrayList<>();
-            VentaReponse ventaResponse= new VentaReponse();
-
-            Flux.fromIterable(consumerClient.receiveFromPartition("1", 300, EventPosition.earliest()))
-                    .flatMap(event -> {
+            VentaResponse ventaResponse= new VentaResponse();
+            Flux.fromIterable(consumerClient.receiveFromPartition("0", 300, EventPosition.earliest()))
+                    .map(event -> {
                         byte[] eventDataBytes = event.getData().getBody();
                         String eventDataString = new String(eventDataBytes, StandardCharsets.UTF_8);
                         Sales venta = new Gson().fromJson(eventDataString, Sales.class);
                         System.out.println("Hola");
                         ventasList.add(venta);
-                        //Insertar a base de datos
-
-                        return processEvent(event);
-                    })
+                        return venta;
+                    }).flatMap(res->databaseService.insertSales(res))
                     .doOnNext(result -> log.info("Event processed successfully: {}", result))
                     .doOnError(error -> log.error("Error processing event: {}", error.getMessage()))
                     .subscribe();
-
             consumerClient.close();
-            ventaResponse.setData(ventasList);
-            ventaResponse.setMessage(!ventasList.isEmpty()?"Operación exitosa.":"Sin datos.");
 
+            ventaResponse.setBatchId(String.valueOf(generateUniqueRandomNumber(1,2)));
+            ventaResponse.setFileName("RUV_TC_07052023.txt");
+            long timestamp = System.currentTimeMillis(); // Crea un objeto Date a partir del timestamp
+            Date fechaActual = new Date(timestamp);
+            ventaResponse.setDate(fechaActual);
+            ventaResponse.setStatus("P");
+            ventaResponse.setData(ventasList);
 
             return ventaResponse;
-
         }catch (Exception e) {
             System.out.println("Error al establecer la conexión con el Event Hub: " + e.getMessage());
             return null;
         }
+    }
 
+    public static int generateUniqueRandomNumber(int min, int max) {
+        return random.nextInt(max - min + 1) + min;
     }
 }

@@ -2,7 +2,7 @@ package com.prueba.eventhub.servicios;
 
 
 import com.prueba.eventhub.model.Ruv;
-import com.prueba.eventhub.model.VentaReponse;
+import com.prueba.eventhub.model.VentaResponse;
 
 public interface ConsumerToEventHubService {
 
@@ -12,6 +12,6 @@ public interface ConsumerToEventHubService {
 
     String connectEventHub();
 
-    VentaReponse consumerEventHubToSql(String eventHubName);
+    VentaResponse consumerEventHubToSql(String eventHubName);
 
 }
